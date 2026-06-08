@@ -2,7 +2,7 @@
 
 This repository contains the MVP landing page for validating demand for a premium local AI infrastructure product.
 
-The project is currently in the validation stage. The goal is not immediate ecommerce checkout. The goal is to test whether AI power users are interested in a Personal AI Server and willing to apply for early access, book a demo, and express price intent.
+The project is currently in the validation stage. The goal is not immediate ecommerce checkout. The goal is to test whether AI power users are interested in a Personal AI Server and willing to apply for early access, request a demo conversation, and express price intent.
 
 ## Positioning
 
@@ -24,6 +24,8 @@ The product is positioned as local AI infrastructure for LLMs, agents, RAG, imag
 
 ```text
 .
+|-- assets/
+|   `-- personal-ai-server-hero.jpg
 |-- docs/
 |   |-- prd-v2.1.md
 |   |-- development-plan.md
@@ -34,7 +36,7 @@ The product is positioned as local AI infrastructure for LLMs, agents, RAG, imag
 `-- README.md
 ```
 
-The existing `index.html`, `style.css`, and `script.js` are the initial placeholder page. The actual Personal AI Server landing page implementation starts in Issue #3.
+The current `index.html`, `style.css`, and `script.js` contain the static Personal AI Server landing page shell from Issue #3. Form validation, FAQ behavior, analytics hooks, and launch QA are handled in later issues.
 
 ## Source Documents
 
@@ -44,16 +46,18 @@ The existing `index.html`, `style.css`, and `script.js` are the initial placehol
 
 ## Development Order
 
-1. Issue #2: Migrate PRD and establish project baseline
-2. Issue #3: Create static landing page shell
-3. Issue #4: Implement Founding User application form
+1. Issue #2: Migrate PRD and establish project baseline - completed
+2. Issue #3: Create static landing page shell - completed
+3. Issue #4: Implement Founding User application form - next
 4. Issue #5: Add FAQ accordion and copy guardrails
 5. Issue #6: Add analytics event hooks
 6. Issue #7: Visual QA and launch checklist
 
+Issue #1 is a test issue and is not part of the official implementation sequence.
+
 ## Local Development
 
-The current placeholder page can be opened directly in a browser:
+Open the page directly in a browser:
 
 ```text
 index.html
