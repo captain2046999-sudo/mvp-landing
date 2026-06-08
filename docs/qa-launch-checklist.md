@@ -6,7 +6,7 @@ This checklist is the launch-readiness template for the Personal AI Server landi
 
 Current status:
 
-- Issue #2 baseline documentation: in progress
+- Issue #2 baseline documentation: complete
 - Issue #3 static landing page shell: pending
 - Issue #4 founding user form: pending
 - Issue #5 FAQ and copy guardrails: pending
