@@ -1,30 +1,247 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MVP Landing Page</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal AI Server | Run Large AI Models Locally</title>
+  <meta name="description" content="Run 70B-class quantized models, AI agents, private RAG, image generation, and voice workflows on your own local AI server.">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="hero">
-    <h1>你的产品名称</h1>
-    <p>一句话描述核心价值</p>
-    <button id="ctaBtn">立即体验</button>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Personal AI Server home">
+      <span class="brand-mark">PA</span>
+      <span>Personal AI Server</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#models">Models</a>
+      <a href="#memory">128GB Memory</a>
+      <a href="#stack">Stack</a>
+      <a href="#program">Early Access</a>
+    </nav>
   </header>
 
-  <section class="features">
-    <h2>核心功能</h2>
-    <ul>
-      <li>✅ 功能点一</li>
-      <li>✅ 功能点二</li>
-      <li>✅ 功能点三</li>
-    </ul>
-  </section>
+  <main id="top">
+    <section class="hero section-band">
+      <div class="hero-copy">
+        <p class="eyebrow">Local AI infrastructure for power users</p>
+        <h1>Run Large AI Models Locally</h1>
+        <p class="hero-subtitle">Run 70B-class quantized models, DeepSeek-style reasoning workflows, AI agents, private RAG, image generation, and voice models on your own machine.</p>
+        <div class="proof-list" aria-label="Core benefits">
+          <span>Own your AI workspace</span>
+          <span>No recurring cloud GPU bills</span>
+          <span>No per-generation cloud limits</span>
+          <span>No private data uploaded by default</span>
+        </div>
+        <div class="hero-actions">
+          <a class="button primary" href="#program">Apply for Early Access</a>
+          <a class="button secondary" href="#program">Request Demo Interest</a>
+        </div>
+        <p class="microcopy">Founding user program for AI power users, founders, agent builders, and small AI teams.</p>
+      </div>
+      <figure class="hero-media">
+        <img src="assets/personal-ai-server-hero.jpg" alt="Personal AI Server on a desk with local AI dashboard visible on a monitor">
+      </figure>
+    </section>
 
-  <footer>
-    <p>&copy; 2026 Your Company</p>
-  </footer>
+    <section id="models" class="section-wrap">
+      <div class="section-heading">
+        <p class="eyebrow">What you can run locally</p>
+        <h2>One Local Machine. Multiple AI Workflows.</h2>
+        <p>Personal AI Server is designed for local LLMs, agents, private knowledge bases, image generation, voice models, and multimodal experiments.</p>
+      </div>
+
+      <div class="workflow-grid">
+        <article class="workflow-card">
+          <h3>LLMs</h3>
+          <p>Qwen3 32B, 70B-class quantized workflows, and DeepSeek-style reasoning experiments.</p>
+        </article>
+        <article class="workflow-card">
+          <h3>Agents</h3>
+          <p>Local coding agents, tool-using agents, and long-running automation tasks.</p>
+        </article>
+        <article class="workflow-card">
+          <h3>Private RAG</h3>
+          <p>Keep documents, prompts, datasets, and knowledge bases on hardware you control.</p>
+        </article>
+        <article class="workflow-card">
+          <h3>Multimodal</h3>
+          <p>Image generation, voice workflows, vision models, and AI content experiments.</p>
+        </article>
+      </div>
+
+      <div class="table-panel" aria-label="Model and workflow status">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Recommended Models / Tools</th>
+              <th>MVP Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>LLM</td><td>Qwen3 32B</td><td>Testing</td></tr>
+            <tr><td>LLM</td><td>Qwen3 70B-class quantized workflows</td><td>Testing</td></tr>
+            <tr><td>Reasoning</td><td>DeepSeek distill / DeepSeek-style workflows</td><td>Planned validation</td></tr>
+            <tr><td>Agent</td><td>OpenHands, local coding agents</td><td>Planned validation</td></tr>
+            <tr><td>RAG</td><td>Open WebUI, private knowledge base</td><td>Testing</td></tr>
+            <tr><td>Image</td><td>Flux, SDXL</td><td>Testing</td></tr>
+            <tr><td>Voice</td><td>CosyVoice, GPT-SoVITS</td><td>Planned validation</td></tr>
+            <tr><td>Vision</td><td>Qwen-VL</td><td>Planned validation</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="disclaimer">Model support depends on configuration, quantization, software version, and workflow settings. Verified test results will be shared with founding users before final purchase decisions.</p>
+    </section>
+
+    <section id="memory" class="section-band split-section">
+      <div>
+        <p class="eyebrow">Why memory matters</p>
+        <h2>Built For Models That Ordinary PCs Cannot Fit</h2>
+        <p>For local AI, memory is often the real bottleneck. Many AI machines are fast enough for demos but limited when you try to run larger models, long-context workflows, RAG systems, or multiple AI tools at the same time.</p>
+        <p>Personal AI Server is designed around large unified memory, giving local AI builders more room for large quantized models, private knowledge bases, agents, and multi-tool workflows.</p>
+      </div>
+      <div class="metric-panel" aria-label="128GB unified memory benefits">
+        <strong>128GB Unified Memory</strong>
+        <ul>
+          <li>Run larger local model workflows</li>
+          <li>Keep RAG, LLM, and agent tools in one environment</li>
+          <li>Work with private documents and datasets locally</li>
+          <li>Reduce dependence on cloud GPU rentals</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section-wrap">
+      <div class="section-heading">
+        <p class="eyebrow">Positioning</p>
+        <h2>Local AI Infrastructure, Not Another Mini PC Listing</h2>
+        <p>You are not buying a chip. You are building your own local AI infrastructure.</p>
+      </div>
+      <div class="comparison-grid">
+        <div class="comparison-column muted-column">
+          <h3>Generic Mini PC Store</h3>
+          <ul>
+            <li>Hardware specs first</li>
+            <li>You configure everything</li>
+            <li>Generic PC positioning</li>
+            <li>Competes on price</li>
+            <li>Focuses on chip names</li>
+          </ul>
+        </div>
+        <div class="comparison-column strong-column">
+          <h3>Personal AI Server</h3>
+          <ul>
+            <li>AI workflows first</li>
+            <li>Preloaded local AI stack</li>
+            <li>Local AI infrastructure positioning</li>
+            <li>Competes on AI capability and setup quality</li>
+            <li>Focuses on model and workflow outcomes</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="stack" class="section-band">
+      <div class="section-heading">
+        <p class="eyebrow">Preloaded stack</p>
+        <h2>Preloaded Local AI Stack</h2>
+        <p>Skip the setup pain and start with a working local AI environment designed for power users. The final included software stack will be shaped by founding user interviews and validation results.</p>
+      </div>
+      <div class="stack-grid" aria-label="Planned local AI stack">
+        <span>Ollama</span>
+        <span>Open WebUI</span>
+        <span>ComfyUI</span>
+        <span>Pinokio</span>
+        <span>Local model management</span>
+        <span>Private RAG workspace</span>
+        <span>Agent tool setup</span>
+        <span>Voice workflows</span>
+      </div>
+    </section>
+
+    <section class="section-wrap split-section">
+      <div>
+        <p class="eyebrow">Hardware support</p>
+        <h2>Powered By Hardware Built For Local AI</h2>
+        <p>Personal AI Server is planned around AMD Ryzen AI Max+ 395, a 128GB unified memory configuration, 2TB SSD storage, and integrated Radeon graphics.</p>
+        <p>The hardware is selected to support local LLMs, agents, RAG, image generation, voice models, and long-running personal AI workflows in a compact machine.</p>
+      </div>
+      <div class="spec-list" aria-label="Planned hardware specification">
+        <span>AMD Ryzen AI Max+ 395</span>
+        <span>128GB unified memory configuration</span>
+        <span>2TB SSD</span>
+        <span>Radeon 8060S integrated graphics</span>
+        <span>Compact local AI server form factor</span>
+      </div>
+    </section>
+
+    <section class="section-band">
+      <div class="section-heading">
+        <p class="eyebrow">Audience</p>
+        <h2>Built For AI Power Users</h2>
+      </div>
+      <div class="audience-grid">
+        <article><h3>LocalLLaMA Power Users</h3><p>Run larger local models and experiment with local inference without renting cloud GPUs for every workflow.</p></article>
+        <article><h3>AI Founders</h3><p>Prototype private AI products, agents, internal tools, and demos on your own machine.</p></article>
+        <article><h3>Agent Developers</h3><p>Run coding agents, tool-using agents, and local automation workflows in a dedicated local environment.</p></article>
+        <article><h3>Small AI Teams</h3><p>Create a shared local AI workspace for RAG, model testing, internal tools, and workflow experiments.</p></article>
+      </div>
+    </section>
+
+    <section class="section-wrap warning-section">
+      <p class="eyebrow">Wrong fit clarification</p>
+      <h2>Not The Right Machine For Everyone</h2>
+      <p>Personal AI Server is not designed to be the fastest possible Flux or SDXL box. If your only goal is maximum image generation speed with CUDA, TensorRT, or RTX 5090-class GPU performance, a dedicated NVIDIA workstation may be a better fit.</p>
+      <p>This product is designed for users who care more about large local models, unified memory, agents, private RAG, multi-workflow AI infrastructure, and owning their AI environment.</p>
+    </section>
+
+    <section id="program" class="section-band program-section">
+      <div class="program-copy">
+        <p class="eyebrow">Founding User Program</p>
+        <h2>Apply For Early Access</h2>
+        <p>We are selecting early users who want to help shape a personal AI server for local LLMs, agents, RAG, image generation, voice workflows, and private AI infrastructure.</p>
+        <ul>
+          <li>Early access to configuration details</li>
+          <li>Model and workflow validation updates</li>
+          <li>Private demo opportunity</li>
+          <li>Founding user pricing discussion</li>
+          <li>Input on the preloaded AI stack</li>
+        </ul>
+      </div>
+      <form class="application-form" aria-label="Founding user application form">
+        <label>Email<input type="email" name="email" placeholder="you@example.com"></label>
+        <label>Role<select name="role"><option>Local AI power user</option><option>AI founder</option><option>AI developer</option><option>Agent builder</option><option>Small team lead</option></select></label>
+        <label>Models you want to run locally<textarea name="models" rows="3" placeholder="Qwen3, DeepSeek distill, RAG, agents, Flux..."></textarea></label>
+        <label>Expected budget<select name="budget"><option>Under USD 2,500</option><option>USD 2,500-3,299</option><option>USD 3,299-3,999</option><option>USD 4,000+</option><option>Depends on software stack and support</option></select></label>
+        <button class="button primary" type="button">Apply for Early Access</button>
+        <p class="form-note">Form validation, success state, and data capture will be implemented in Issue #4.</p>
+      </form>
+    </section>
+
+    <section class="section-wrap faq-section">
+      <div class="section-heading">
+        <p class="eyebrow">FAQ</p>
+        <h2>Questions Power Users Ask First</h2>
+      </div>
+      <div class="faq-list">
+        <article><h3>Can it run 70B models locally?</h3><p>It is designed for 70B-class quantized model workflows, but final support depends on model version, quantization, memory use, context length, and software stack.</p></article>
+        <article><h3>Why use 128GB unified memory instead of an RTX 5090 workstation?</h3><p>If your main priority is maximum image generation speed in CUDA workflows, an RTX 5090 workstation may be a better fit. Personal AI Server is designed for large local model workflows, private RAG, agents, and multi-tool AI infrastructure.</p></article>
+        <article><h3>Is this better than renting cloud GPUs?</h3><p>Cloud GPUs are useful for peak performance and occasional heavy jobs. Personal AI Server is designed for users who want an always-available local AI environment for everyday workflows.</p></article>
+        <article><h3>Can I build a private RAG system?</h3><p>Yes, private RAG is a core use case. The planned stack includes local model tools, Open WebUI-style workflows, and private knowledge base support.</p></article>
+      </div>
+    </section>
+
+    <section class="final-cta section-band">
+      <p class="eyebrow">Next batch</p>
+      <h2>Build Your Own Local AI Infrastructure</h2>
+      <p>Apply for the founding user program and help shape a personal AI server for large local models, AI agents, private RAG, image generation, voice workflows, and AI automation.</p>
+      <div class="hero-actions center-actions">
+        <a class="button primary" href="#program">Apply for Early Access</a>
+        <a class="button secondary" href="#program">Request Demo Interest</a>
+      </div>
+    </section>
+  </main>
 
   <script src="script.js"></script>
 </body>
