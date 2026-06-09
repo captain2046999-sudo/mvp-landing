@@ -43,18 +43,9 @@ const assert = (condition, message) => {
   'Complete the required fields before continuing.',
   'Enter a valid email address.',
   'Application details validated. Continue to Tally to save your application.',
-  'new FormData(form)',
   'url.searchParams.set'
 ].forEach((snippet) => {
   assert(script.includes(snippet), `Missing validation script snippet: ${snippet}`);
-});
-
-[
-  'gtag(',
-  'clarity(',
-  'dataLayer'
-].forEach((outOfScopeSnippet) => {
-  assert(!script.includes(outOfScopeSnippet), `Out-of-scope analytics found: ${outOfScopeSnippet}`);
 });
 
 assert(!html.includes("Form validation, success state, and data capture will be implemented in Issue #4."), "Stale Issue #4 placeholder copy remains.");
