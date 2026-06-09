@@ -2,7 +2,7 @@
 
 This repository contains the MVP landing page for validating demand for a premium local AI infrastructure product.
 
-The project is currently in the validation stage. The goal is not immediate ecommerce checkout. The goal is to test whether AI power users are interested in a Personal AI Server and willing to apply for early access, request a demo conversation, and express price intent.
+The project is currently in the validation stage. The goal is not immediate ecommerce checkout. The goal is to test whether AI power users are interested in a Personal AI Server and willing to apply for early access, book a demo, and express price intent.
 
 ## Positioning
 
@@ -24,22 +24,23 @@ The product is positioned as local AI infrastructure for LLMs, agents, RAG, imag
 
 ```text
 .
-|-- assets/
-|   `-- personal-ai-server-hero.jpg
 |-- docs/
 |   |-- prd-v2.1.md
 |   |-- development-plan.md
 |   `-- qa-launch-checklist.md
-|-- tests/
-|   |-- issue-4-validation-checks.js
-|   `-- issue-5-validation-checks.js
 |-- index.html
 |-- style.css
 |-- script.js
+|-- assets/
+|   `-- personal-ai-server-hero.jpg
+|-- tests/
+|   |-- issue-4-validation-checks.js
+|   |-- issue-5-validation-checks.js
+|   `-- issue-6-validation-checks.js
 `-- README.md
 ```
 
-The current `index.html`, `style.css`, and `script.js` contain the static Personal AI Server landing page shell, Founding User application form, and FAQ accordion from Issues #3, #4, and #5. Analytics hooks and launch QA are handled in later issues.
+The current MVP is a static landing page with PRD-aligned copy, founding user form validation, FAQ guardrails, and analytics hooks.
 
 ## Source Documents
 
@@ -53,27 +54,41 @@ The current `index.html`, `style.css`, and `script.js` contain the static Person
 2. Issue #3: Create static landing page shell - completed
 3. Issue #4: Implement Founding User application form - completed
 4. Issue #5: Add FAQ accordion and copy guardrails - completed
-5. Issue #6: Add analytics event hooks - next
+5. Issue #6: Add analytics event hooks - completed
 6. Issue #7: Visual QA and launch checklist
 
 Issue #1 is a test issue and is not part of the official implementation sequence.
 
 ## Local Development
 
-Open the page directly in a browser:
+The current page can be opened directly in a browser:
 
 ```text
 index.html
 ```
 
-Run the static checks with Node.js:
+No build step is required yet. If a framework is introduced later, update this README with install, run, test, and deploy commands.
+
+## Validation Checks
+
+Run the static validation checks after editing the page:
 
 ```text
 node tests/issue-4-validation-checks.js
 node tests/issue-5-validation-checks.js
+node tests/issue-6-validation-checks.js
 ```
 
-No build step is required yet. If a framework is introduced later, update this README with install, run, test, and deploy commands.
+## Analytics
+
+The page includes GA4 and Microsoft Clarity tracking for the MVP validation funnel.
+
+- GA4 measurement ID: `G-V81RVYZK5H`
+- Clarity project ID: `x3lkfxqt3i`
+- Primary form destination: `https://tally.so/r/81ryAo`
+- Demo booking URL: `https://calendly.com/captain2046999/personal-ai-server-founding-user-call`
+
+Tracked events include hero CTA clicks, model/memory/stack section views, budget range selection, early access submission, demo booking clicks, FAQ expansion, and 50% / 90% scroll depth.
 
 ## Messaging Guardrails
 
