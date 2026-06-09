@@ -50,7 +50,7 @@ assert(css.includes(".faq-item[open] summary::after"), "FAQ open state indicator
   "always faster than cloud",
   "replaces cloud GPUs"
 ].forEach((claim) => {
-  assert(!html.toLowerCase().includes(claim), `Unsupported claim found: ${claim}`);
+  assert(!html.toLowerCase().includes(claim.toLowerCase()), `Unsupported claim found: ${claim}`);
 });
 
 console.log("Issue #5 FAQ checks passed.");
