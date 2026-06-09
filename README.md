@@ -36,7 +36,8 @@ The product is positioned as local AI infrastructure for LLMs, agents, RAG, imag
 |-- tests/
 |   |-- issue-4-validation-checks.js
 |   |-- issue-5-validation-checks.js
-|   `-- issue-6-validation-checks.js
+|   |-- issue-6-validation-checks.js
+|   `-- issue-7-launch-readiness-checks.js
 `-- README.md
 ```
 
@@ -55,7 +56,7 @@ The current MVP is a static landing page with PRD-aligned copy, founding user fo
 3. Issue #4: Implement Founding User application form - completed
 4. Issue #5: Add FAQ accordion and copy guardrails - completed
 5. Issue #6: Add analytics event hooks - completed
-6. Issue #7: Visual QA and launch checklist
+6. Issue #7: Visual QA and launch checklist - in progress
 
 Issue #1 is a test issue and is not part of the official implementation sequence.
 
@@ -77,7 +78,10 @@ Run the static validation checks after editing the page:
 node tests/issue-4-validation-checks.js
 node tests/issue-5-validation-checks.js
 node tests/issue-6-validation-checks.js
+node tests/issue-7-launch-readiness-checks.js
 ```
+
+Issue #7 adds launch-readiness checks for positioning, copy guardrails, form destinations, analytics event coverage, privacy-safe outbound URLs, and responsive CSS. Hosted desktop/mobile visual QA still needs to be completed on the deployed URL before paid traffic starts.
 
 ## Analytics
 
