@@ -1,4 +1,141 @@
 (() => {
+  const trackEvent = (eventName, params = {}) => {
+    if (!eventName) {
+      return;
+    }
+
+    const payload = { ...params };
+
+    console.info("[analytics]", eventName, payload);
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: eventName,
+      ...payload
+    });
+
+    if (typeof window.gtag === "function") {
+      window.gtag("event", eventName, payload);
+    }
+
+    if (typeof window.clarity === "function") {
+      window.clarity("event", eventName);
+
+      Object.entries(payload).forEach(([key, value]) => {
+        if (value === undefined || value === null || typeof value === "object") {
+          return;
+        }
+
+        window.clarity("set", key, String(value));
+      });
+    }
+  };
+
+  const getElementLabel = (element) => element.textContent.trim().replace(/\s+/g, " ");
+
+  const getSafeDestination = (href) => {
+    if (!href) {
+      return "";
+    }
+
+    try {
+      const url = new URL(href, window.location.href);
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return href.split("?")[0];
+    }
+  };
+
+  document.querySelectorAll("[data-analytics-event]").forEach((element) => {
+    element.addEventListener("click", () => {
+      trackEvent(element.dataset.analyticsEvent, {
+        label: getElementLabel(element),
+        destination: getSafeDestination(element.getAttribute("href") || ""),
+        section: element.closest("[data-section-event]")?.dataset.sectionEvent || ""
+      });
+    });
+  });
+
+  const viewedSections = new Set();
+  const trackSectionView = (section) => {
+    const eventName = section.dataset.sectionEvent;
+
+    if (!eventName || viewedSections.has(eventName)) {
+      return;
+    }
+
+    viewedSections.add(eventName);
+    trackEvent(eventName, {
+      section_id: section.id || "hero"
+    });
+  };
+
+  const trackedSections = document.querySelectorAll("[data-section-event]");
+
+  if ("IntersectionObserver" in window) {
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          trackSectionView(entry.target);
+          sectionObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+
+    trackedSections.forEach((section) => sectionObserver.observe(section));
+  } else {
+    trackedSections.forEach(trackSectionView);
+  }
+
+  const trackedScrollDepths = new Set();
+  const scrollDepthEvents = [
+    { depth: 50, eventName: "scroll_50" },
+    { depth: 90, eventName: "scroll_90" }
+  ];
+
+  const trackScrollDepth = () => {
+    const documentElement = document.documentElement;
+    const scrollHeight = Math.max(document.body.scrollHeight, documentElement.scrollHeight);
+    const viewportHeight = window.innerHeight || documentElement.clientHeight;
+    const scrollableHeight = scrollHeight - viewportHeight;
+    const currentDepth = scrollableHeight <= 0
+      ? 100
+      : Math.round(((window.scrollY || documentElement.scrollTop) / scrollableHeight) * 100);
+
+    scrollDepthEvents.forEach(({ depth, eventName }) => {
+      if (currentDepth >= depth && !trackedScrollDepths.has(eventName)) {
+        trackedScrollDepths.add(eventName);
+        trackEvent(eventName, {
+          scroll_depth: depth
+        });
+      }
+    });
+  };
+
+  window.addEventListener("scroll", trackScrollDepth, { passive: true });
+  trackScrollDepth();
+
+  const trackedFaqQuestions = new Set();
+
+  document.querySelectorAll("details.faq-item").forEach((details, index) => {
+    details.addEventListener("toggle", () => {
+      if (!details.open) {
+        return;
+      }
+
+      const question = details.querySelector("summary")?.textContent.trim() || `FAQ ${index + 1}`;
+
+      if (trackedFaqQuestions.has(question)) {
+        return;
+      }
+
+      trackedFaqQuestions.add(question);
+      trackEvent("faq_expand", {
+        question
+      });
+    });
+  });
+
   const form = document.querySelector("[data-application-form]");
 
   if (!form) {
@@ -102,11 +239,6 @@
 
   const buildTallyUrl = () => {
     const url = new URL(form.dataset.tallyBaseUrl || "https://tally.so/r/81ryAo");
-    const data = new FormData(form);
-
-    data.forEach((value, key) => {
-      url.searchParams.set(key, String(value).trim());
-    });
 
     url.searchParams.set("source", "personal-ai-server-landing");
     url.searchParams.set("intent", "founding-user-application");
@@ -130,6 +262,19 @@
     }
   });
 
+  const trackedBudgetRanges = new Set();
+
+  getField("budget")?.addEventListener("change", () => {
+    const budgetRange = getTrimmedValue("budget");
+
+    if (budgetRange && !trackedBudgetRanges.has(budgetRange)) {
+      trackedBudgetRanges.add(budgetRange);
+      trackEvent("select_budget_range", {
+        budget_range: budgetRange
+      });
+    }
+  });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     clearAllErrors();
@@ -149,6 +294,15 @@
 
     const tallyUrl = buildTallyUrl();
     const calendlyUrl = form.dataset.calendlyUrl || "https://calendly.com/captain2046999/personal-ai-server-founding-user-call";
+    const selectedDemoInterest = form.querySelector('input[name="demo_interest"]:checked')?.value || "";
+
+    trackEvent("submit_early_access", {
+      role: getTrimmedValue("role"),
+      use_case: getTrimmedValue("use_case"),
+      monthly_spend: getTrimmedValue("monthly_spend"),
+      budget_range: getTrimmedValue("budget"),
+      demo_interest: selectedDemoInterest
+    });
 
     if (tallyLink) {
       tallyLink.href = tallyUrl;
