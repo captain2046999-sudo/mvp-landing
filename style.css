@@ -279,7 +279,7 @@ h3 {
 .comparison-column,
 .metric-panel,
 .application-form,
-.faq-list article {
+.faq-item {
   border-radius: var(--radius);
   border: 1px solid var(--line-dark);
   background: rgba(255, 255, 255, 0.62);
@@ -289,7 +289,7 @@ h3 {
 .section-band .audience-grid article,
 .section-band .metric-panel,
 .section-band .application-form,
-.section-band .faq-list article {
+.section-band .faq-item {
   border-color: var(--line);
   background: var(--surface);
 }
@@ -542,6 +542,50 @@ textarea[aria-invalid="true"] {
   gap: 14px;
   max-width: var(--max);
   margin: 0 auto;
+}
+
+.faq-item {
+  padding: 0;
+  overflow: hidden;
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 18px 22px;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 800;
+  line-height: 1.25;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: #426d31;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.faq-item[open] summary::after {
+  content: "-";
+}
+
+.faq-item summary:focus-visible {
+  outline: 2px solid #426d31;
+  outline-offset: -2px;
+}
+
+.faq-item p {
+  padding: 0 22px 22px;
 }
 
 .final-cta {
