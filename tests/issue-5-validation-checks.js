@@ -18,6 +18,17 @@ const requiredCopy = [
   "Is this better than renting cloud GPUs?",
   "Can I run AI agents locally?",
   "Can I build a private RAG system?",
+  "Does it support image generation?",
+  "Flux and SDXL-style workflows",
+  "not positioned as the fastest image-generation machine",
+  "Does it support voice models?",
+  "CosyVoice and GPT-SoVITS are planned for validation",
+  "Do I need to configure everything myself?",
+  "preloaded local AI stack, workflow recipes, setup guidance, and optional onboarding",
+  "Who should not apply?",
+  "cheap mini PC, a gaming PC, or the fastest CUDA image generation box",
+  "What price range should I expect?",
+  "USD 3,299-3,999",
   "Not The Right Machine For Everyone"
 ];
 
@@ -25,8 +36,8 @@ requiredCopy.forEach((copy) => {
   assert(html.includes(copy), `Missing guarded FAQ or wrong-fit copy: ${copy}`);
 });
 
-assert((html.match(/<details class="faq-item"/g) || []).length >= 5, "FAQ should use details accordion items.");
-assert((html.match(/<summary>/g) || []).length >= 5, "FAQ should use keyboard-accessible summary labels.");
+assert((html.match(/<details class="faq-item"/g) || []).length >= 10, "FAQ should include all 10 PRD FAQ items as details accordion items.");
+assert((html.match(/<summary>/g) || []).length >= 10, "FAQ should use keyboard-accessible summary labels for all PRD FAQ items.");
 assert(html.includes("<details class=\"faq-item\" open>"), "At least one FAQ item should be open by default.");
 assert(css.includes(".faq-item summary:focus-visible"), "FAQ summary focus style is missing.");
 assert(css.includes(".faq-item[open] summary::after"), "FAQ open state indicator style is missing.");
