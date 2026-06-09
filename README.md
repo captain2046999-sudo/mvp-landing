@@ -30,13 +30,15 @@ The product is positioned as local AI infrastructure for LLMs, agents, RAG, imag
 |   |-- prd-v2.1.md
 |   |-- development-plan.md
 |   `-- qa-launch-checklist.md
+|-- tests/
+|   `-- issue-4-validation-checks.js
 |-- index.html
 |-- style.css
 |-- script.js
 `-- README.md
 ```
 
-The current `index.html`, `style.css`, and `script.js` contain the static Personal AI Server landing page shell from Issue #3. Form validation, FAQ behavior, analytics hooks, and launch QA are handled in later issues.
+The current `index.html`, `style.css`, and `script.js` contain the static Personal AI Server landing page shell and the Founding User application form from Issues #3 and #4. FAQ behavior, analytics hooks, and launch QA are handled in later issues.
 
 ## Source Documents
 
@@ -48,8 +50,8 @@ The current `index.html`, `style.css`, and `script.js` contain the static Person
 
 1. Issue #2: Migrate PRD and establish project baseline - completed
 2. Issue #3: Create static landing page shell - completed
-3. Issue #4: Implement Founding User application form - next
-4. Issue #5: Add FAQ accordion and copy guardrails
+3. Issue #4: Implement Founding User application form - completed
+4. Issue #5: Add FAQ accordion and copy guardrails - next
 5. Issue #6: Add analytics event hooks
 6. Issue #7: Visual QA and launch checklist
 
@@ -61,6 +63,12 @@ Open the page directly in a browser:
 
 ```text
 index.html
+```
+
+Run the Issue #4 static form checks with Node.js:
+
+```text
+node tests/issue-4-validation-checks.js
 ```
 
 No build step is required yet. If a framework is introduced later, update this README with install, run, test, and deploy commands.
