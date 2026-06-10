@@ -12,13 +12,31 @@ Current implementation status:
 - Issue #5 FAQ and copy guardrails: complete
 - Issue #6 analytics hooks: complete
 - Issue #7 final QA pass: in progress
+- Issue #9 Vercel deploy and hosted QA: in progress
 
 Launch status:
 
 - Static launch-readiness checks: passed locally
-- Hosted desktop visual QA: pending after deploy URL is available
-- Hosted mobile visual QA: pending after deploy URL is available
-- First paid traffic: not approved until hosted visual QA is complete
+- Vercel production deployment: passed
+- Hosted fetch-level QA: passed
+- Hosted desktop visual QA: pending manual browser pass
+- Hosted mobile visual QA: pending manual browser pass
+- Hosted form interaction QA: pending manual browser pass
+- First paid traffic: not approved until hosted browser QA is complete
+
+Production URL:
+
+- `https://mvp-landing-iota.vercel.app`
+
+Deployment evidence:
+
+- Project: `mvp-landing`
+- Project ID: `prj_9ysKw3aZWSi0AvAmCOY1t9eAGKRb`
+- Deployment ID: `dpl_4AeP4EcAP4DYzJH3DFHaFC5zHZZg`
+- Deployment state: `READY`
+- Target: `production`
+- Commit: `37387ed17d9b2ae199c1953856cf26f0cd0491b5`
+- Build result: completed, static build output generated in 29ms
 
 ---
 
@@ -81,11 +99,41 @@ Checks covered:
 
 ---
 
-## 4. Manual Visual QA
+## 4. Hosted Fetch-Level QA
 
 Status:
 
-Pending on hosted URL.
+Passed.
+
+Checks completed:
+
+- Production homepage returns `200 OK`
+- Production homepage renders expected `Personal AI Server` HTML
+- `style.css` returns `200 OK`
+- `script.js` returns `200 OK`
+- `assets/personal-ai-server-hero.jpg` returns `200 OK`
+- Unknown path returns `404 Not Found`
+- Main production domain does not return `x-robots-tag: noindex`
+- Runtime logs query returned no logs for the static site window checked
+
+Notes:
+
+- This confirms deployment availability and static asset delivery.
+- This does not replace real browser visual QA or form interaction QA.
+
+---
+
+## 5. Manual Visual QA
+
+Status:
+
+Pending manual browser pass.
+
+Automation note:
+
+- Chrome extension automation could list/open tabs but timed out while loading the production page.
+- Chrome and Edge headless modes did not emit DOM or screenshot artifacts in this local environment.
+- Therefore desktop/mobile visual QA remains a launch gate.
 
 Desktop checks to complete on hosted URL:
 
@@ -107,11 +155,11 @@ Mobile checks to complete on hosted URL:
 
 ---
 
-## 5. Copy Guardrail QA
+## 6. Copy Guardrail QA
 
 Status:
 
-Passed by static review. Recheck manually before paid traffic.
+Passed by static and hosted fetch review. Recheck manually before paid traffic.
 
 Required checks:
 
@@ -126,13 +174,13 @@ Required checks:
 
 ---
 
-## 6. Form QA
+## 7. Form QA
 
 Status:
 
-Passed by static and Node import checks. Browser interaction pass remains required on hosted URL.
+Passed by static and hosted fetch checks. Browser interaction pass remains required on hosted URL.
 
-Required checks:
+Required browser checks:
 
 - Required fields block empty submission
 - Invalid email blocks submission
@@ -146,11 +194,11 @@ Required checks:
 
 ---
 
-## 7. Analytics QA
+## 8. Analytics QA
 
 Status:
 
-Passed by static review. Browser console sanity check remains required on hosted URL.
+Passed by static and hosted fetch review. Browser console sanity check remains required on hosted URL.
 
 Required event checks:
 
@@ -178,7 +226,7 @@ Acceptance:
 
 ---
 
-## 8. Accessibility Basics
+## 9. Accessibility Basics
 
 Status:
 
@@ -196,11 +244,11 @@ Required checks:
 
 ---
 
-## 9. Performance And Launch Readiness
+## 10. Performance And Launch Readiness
 
 Status:
 
-Conditionally ready for static hosting. Not ready for paid traffic until hosted visual QA passes.
+Conditionally ready for hosted manual QA. Not ready for paid traffic until hosted visual and interaction QA passes.
 
 Required checks:
 
@@ -212,12 +260,14 @@ Required checks:
 
 ---
 
-## 10. Final Launch Gate
+## 11. Final Launch Gate
 
 The MVP is ready for first validation traffic only when:
 
 - Issues #3-#6 are complete
 - Issue #7 static launch-readiness checks pass
+- Vercel production deployment is live
+- Hosted fetch-level QA passes
 - Hosted desktop visual QA passes
 - Hosted mobile visual QA passes
 - Manual form submission to Tally is verified
@@ -228,5 +278,6 @@ The MVP is ready for first validation traffic only when:
 
 Current decision:
 
-- Static MVP implementation is ready for deploy setup.
-- Do not start paid traffic until hosted URL QA is completed.
+- Static MVP implementation is deployed successfully.
+- Production URL is available for manual QA.
+- Do not start paid traffic until hosted browser QA is completed.
