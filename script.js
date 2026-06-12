@@ -55,7 +55,12 @@
   });
 
   const trackedScrollDepths = new Set();
-  const scrollDepths = [25, 50, 75, 100];
+  const scrollDepthEvents = [
+    { depth: 25, eventName: "scroll_25" },
+    { depth: 50, eventName: "scroll_50" },
+    { depth: 75, eventName: "scroll_75" },
+    { depth: 100, eventName: "scroll_100" }
+  ];
   let scrollTicking = false;
 
   const trackScrollDepth = () => {
@@ -67,9 +72,7 @@
       ? 100
       : Math.round(((window.scrollY || documentElement.scrollTop) / scrollableHeight) * 100);
 
-    scrollDepths.forEach((depth) => {
-      const eventName = `scroll_${depth}`;
-
+    scrollDepthEvents.forEach(({ depth, eventName }) => {
       if (currentDepth >= depth && !trackedScrollDepths.has(eventName)) {
         trackedScrollDepths.add(eventName);
         trackEvent(eventName);
