@@ -2,41 +2,42 @@
 
 ## 1. QA Scope
 
-This checklist tracks launch readiness for the Personal AI Server landing page MVP.
+This checklist tracks launch readiness for the Personal AI Server landing page MVP, including Issue #10 analytics and lead capture setup.
 
 Current implementation status:
 
 - Issue #2 baseline documentation: complete
 - Issue #3 static landing page shell: complete
-- Issue #4 founding user form: complete
+- Issue #4 founding user form: complete, updated for Issue #10 qualification fields
 - Issue #5 FAQ and copy guardrails: complete
-- Issue #6 analytics hooks: complete
+- Issue #6 analytics hooks: complete, updated for Issue #10 event names
 - Issue #7 final QA pass: in progress
 - Issue #9 Vercel deploy and hosted QA: in progress
+- Issue #10 analytics and lead capture setup: implemented, live verification pending
 
 Launch status:
 
-- Static launch-readiness checks: passed locally
-- Vercel production deployment: passed
-- Hosted fetch-level QA: passed
-- Hosted desktop visual QA: pending manual browser pass
-- Hosted mobile visual QA: pending manual browser pass
+- Static launch-readiness checks: scripts updated, local execution pending
+- Vercel production deployment: pending redeploy verification for latest commit
+- Hosted fetch-level QA: pending redeploy verification for latest commit
+- GA4 Realtime QA: pending browser/dashboard confirmation
+- Microsoft Clarity session QA: pending browser/dashboard confirmation
+- Hosted desktop visual QA: pending manual Chrome and Edge pass
+- Hosted mobile visual QA: pending manual iPhone and Android viewport pass
 - Hosted form interaction QA: pending manual browser pass
-- First paid traffic: not approved until hosted browser QA is complete
+- First paid traffic: not approved until hosted browser QA and analytics dashboard QA are complete
 
-Production URL:
+Production URLs:
 
+- `https://syvidea.com`
+- `https://www.syvidea.com`
 - `https://mvp-landing-iota.vercel.app`
 
-Deployment evidence:
+Analytics IDs:
 
-- Project: `mvp-landing`
-- Project ID: `prj_9ysKw3aZWSi0AvAmCOY1t9eAGKRb`
-- Deployment ID: `dpl_4AeP4EcAP4DYzJH3DFHaFC5zHZZg`
-- Deployment state: `READY`
-- Target: `production`
-- Commit: `37387ed17d9b2ae199c1953856cf26f0cd0491b5`
-- Build result: completed, static build output generated in 29ms
+- GA4 measurement ID: `G-V81RVYZK5H`
+- Microsoft Clarity project ID: `x3lkfxqt3i`
+- Tally lead destination: `https://tally.so/r/81ryAo`
 
 ---
 
@@ -65,11 +66,63 @@ Validation files:
 
 ---
 
-## 3. Automated Static Checks
+## 3. Issue #10 Acceptance Checklist
+
+GA4:
+
+- GA4 script is present in `index.html`
+- `gtag("config", "G-V81RVYZK5H")` is present
+- `window.trackEvent(name, params)` wrapper is available in `script.js`
+- PageView should fire from GA4 config on page load
+- Realtime dashboard confirmation remains required
+
+Microsoft Clarity:
+
+- Official Clarity async loader is present in `index.html`
+- Project ID `x3lkfxqt3i` is present
+- `script.js` sends event names and safe custom properties to Clarity when available
+- Session recording / heatmap dashboard confirmation remains required
+
+CTA audit:
+
+- All lead-generation CTA links use `https://tally.so/r/81ryAo`
+- `window.PAS_CONFIG.TALLY_FORM_URL` is the single configurable destination
+- No Calendly lead destination remains in the landing page funnel
+- No dead lead buttons are expected after redeploy
+
+Lead capture form:
+
+- Required fields: name and email
+- Persona single choice: AI Enthusiast, Developer, Founder, Consultant, Agency, Enterprise Team
+- Use case single choice: Local LLM, AI Agent, RAG, Image Generation, Coding, Research, Other
+- Budget single choice: Less than $2,000, $2,000-$3,000, $3,000-$5,000, More than $5,000
+- Long text: desired model to run
+- Submit button: `Apply for Early Access`
+
+Analytics events:
+
+- `cta_click` with `location`, `button_text`
+- `form_start`
+- `form_submit` with `persona`, `use_case`, `budget_range`
+- `faq_open` with `faq_id`
+- `scroll_25`
+- `scroll_50`
+- `scroll_75`
+- `scroll_100`
+
+Privacy guardrails:
+
+- Analytics payloads do not include name, email, or free-text desired model answers
+- Tally URL is not built from arbitrary form fields
+- Outbound lead destination is controlled by one config value
+
+---
+
+## 4. Automated Static Checks
 
 Status:
 
-Passed locally.
+Updated, local execution pending.
 
 Command:
 
@@ -82,9 +135,9 @@ node tests/issue-7-launch-readiness-checks.js
 
 Checks covered:
 
-- Hero H1 is `Run Large AI Models Locally`
+- Hero H1 remains `Run Large AI Models Locally`
 - Hero does not mention AMD, Radeon, Ryzen, TOPS, or chip-first messaging
-- Primary CTA is `Apply for Early Access`
+- Primary CTA copy includes `Apply for Early Access`
 - Model matrix includes LLM, Agent, RAG, Image, Voice, Vision, and reasoning workflows
 - 128GB unified memory section is present
 - `Not Another Mini PC Listing` positioning section is present
@@ -92,20 +145,21 @@ Checks covered:
 - AMD Ryzen AI Max+ 395 appears only after solution positioning
 - Wrong-fit section includes RTX 5090 / CUDA image-generation clarification
 - FAQ includes the required high-risk questions
-- Form includes email, role, setup, models, use case, monthly spend, budget, and demo interest
-- Analytics hooks exist for CTA clicks, budget selection, form submit, FAQ expand, section view, and scroll depth
-- Tally URL does not expose free-text or email answers in query parameters
+- Form fields match Issue #10 lead qualification requirements
+- All lead-generation CTA links resolve to the configured Tally URL
+- Analytics events match the Issue #10 event inventory
+- PII and free-text form answers are excluded from analytics payloads
 - Responsive CSS includes desktop-to-mobile layout safeguards
 
 ---
 
-## 4. Hosted Fetch-Level QA
+## 5. Hosted Fetch-Level QA
 
 Status:
 
-Passed.
+Pending redeploy verification for the latest Issue #10 commits.
 
-Checks completed:
+Required checks:
 
 - Production homepage returns `200 OK`
 - Production homepage renders expected `Personal AI Server` HTML
@@ -114,63 +168,39 @@ Checks completed:
 - `assets/personal-ai-server-hero.jpg` returns `200 OK`
 - Unknown path returns `404 Not Found`
 - Main production domain does not return `x-robots-tag: noindex`
-- Runtime logs query returned no logs for the static site window checked
+- Source HTML contains GA4, Clarity, and `TALLY_FORM_URL`
 
 Notes:
 
-- This confirms deployment availability and static asset delivery.
-- This does not replace real browser visual QA or form interaction QA.
+- Fetch-level QA confirms deployment availability and static asset delivery.
+- It does not replace real browser visual QA, form interaction QA, or analytics dashboard QA.
 
 ---
 
-## 5. Manual Visual QA
+## 6. Manual Browser QA
 
 Status:
 
 Pending manual browser pass.
 
-Automation note:
+Desktop checks:
 
-- Chrome extension automation could list/open tabs but timed out while loading the production page.
-- Chrome and Edge headless modes did not emit DOM or screenshot artifacts in this local environment.
-- Therefore desktop/mobile visual QA remains a launch gate.
-
-Desktop checks to complete on hosted URL:
-
-- Page does not look like a generic hardware store
+- Chrome loads `https://syvidea.com` without console errors
+- Edge loads `https://syvidea.com` without console errors
 - Hero communicates local large-model value within the first viewport
-- CTA buttons are visible and clearly tied to early access or demo intent
-- Hardware details are visually secondary to solution positioning
+- CTA buttons are visible and open the same Tally URL
+- Hardware details remain visually secondary to solution positioning
 - Tables are readable without horizontal clutter
-- Form area feels like a founding user program, not ecommerce checkout
+- Form is usable and validation messages are understandable
 
-Mobile checks to complete on hosted URL:
+Mobile checks:
 
-- Hero text wraps cleanly
-- CTA buttons remain easy to tap
+- iPhone viewport: hero text wraps cleanly
+- iPhone viewport: CTA buttons are easy to tap
+- Android viewport: form fields are usable
+- Android viewport: FAQ accordion is easy to open and close
 - Model/workflow table remains readable or scrolls cleanly
-- Form fields are usable on small screens
-- FAQ accordion is easy to open and close
 - No section overlaps, clipped text, or layout shift
-
----
-
-## 6. Copy Guardrail QA
-
-Status:
-
-Passed by static and hosted fetch review. Recheck manually before paid traffic.
-
-Required checks:
-
-- No chip-first hero messaging
-- No unsupported claim that a specific 70B model always runs well
-- Uses cautious wording such as `70B-class quantized workflows`
-- No `unlimited AI` claim
-- No direct claim that the product beats RTX 5090
-- Wrong-fit section explicitly says a dedicated NVIDIA workstation may be better for fastest CUDA image generation
-- AMD Ryzen AI Max+ 395 is used as hardware support, not as the main product identity
-- Page avoids ecommerce/cart conversion language during the validation phase
 
 ---
 
@@ -178,19 +208,18 @@ Required checks:
 
 Status:
 
-Passed by static and hosted fetch checks. Browser interaction pass remains required on hosted URL.
+Pending hosted browser interaction pass.
 
 Required browser checks:
 
-- Required fields block empty submission
-- Invalid email blocks submission
-- Valid submission shows a success state
-- Budget options match PRD V2.1
-- Demo interest is captured
+- Empty submission is blocked
+- Invalid email is blocked
+- Valid submission shows the success state
+- Success state link opens `https://tally.so/r/81ryAo`
+- Every lead CTA opens the same Tally URL
+- There are no Calendly links in the lead funnel
 - Form copy explains the Founding User Program
 - Form does not imply immediate checkout
-- Official Tally submission link resolves to `https://tally.so/r/81ryAo`
-- Demo booking link resolves to the configured Calendly URL
 
 ---
 
@@ -198,31 +227,20 @@ Required browser checks:
 
 Status:
 
-Passed by static and hosted fetch review. Browser console sanity check remains required on hosted URL.
+Static implementation complete; live dashboard verification pending.
 
-Required event checks:
+Required browser checks:
 
-- `view_hero`
-- `click_apply_hero`
-- `click_demo_hero`
-- `click_apply_final`
-- `click_demo_final`
-- `view_model_matrix`
-- `view_memory_section`
-- `view_stack_section`
-- `select_budget_range`
-- `submit_early_access`
-- `click_book_demo`
-- `faq_expand`
-- `scroll_50`
-- `scroll_90`
-
-Acceptance:
-
-- Events can be inspected in the browser console during MVP QA
-- Event names are stable enough for GA4 and Clarity review
-- Scroll events do not fire repeatedly
-- PII and free-text form answers are not appended to outbound Tally URLs
+- GA4 script loads successfully
+- PageView appears in GA4 Realtime
+- `cta_click` appears in GA4 Realtime after clicking hero/footer/form-success CTAs
+- `form_start` appears after first form interaction
+- `form_submit` appears after a valid form submission
+- `faq_open` appears after opening an FAQ item
+- Scroll depth events fire once per threshold
+- No analytics-related console errors appear
+- Clarity initializes without JavaScript conflicts
+- Clarity receives a session for the test visit
 
 ---
 
@@ -248,7 +266,7 @@ Required checks:
 
 Status:
 
-Conditionally ready for hosted manual QA. Not ready for paid traffic until hosted visual and interaction QA passes.
+Conditionally ready for hosted manual QA. Not ready for paid traffic until hosted visual, interaction, and analytics dashboard QA pass.
 
 Required checks:
 
@@ -257,6 +275,8 @@ Required checks:
 - Hero image is compressed enough for MVP validation
 - Third-party scripts are limited to GA4 and Microsoft Clarity
 - Page can be hosted as a static site
+- Clarity async loader does not block rendering
+- GA4 loader does not block rendering
 
 ---
 
@@ -265,19 +285,20 @@ Required checks:
 The MVP is ready for first validation traffic only when:
 
 - Issues #3-#6 are complete
-- Issue #7 static launch-readiness checks pass
+- Issue #10 source implementation is deployed
+- Static launch-readiness checks pass
 - Vercel production deployment is live
 - Hosted fetch-level QA passes
-- Hosted desktop visual QA passes
-- Hosted mobile visual QA passes
-- Manual form submission to Tally is verified
-- Manual Calendly link is verified
+- Hosted desktop visual QA passes in Chrome and Edge
+- Hosted mobile visual QA passes in iPhone and Android viewports
+- Manual form interaction to Tally is verified
 - Browser console analytics sanity check is verified
-- No blocking visual, form, copy, or analytics issues remain
+- GA4 Realtime receives pageview and configured events
+- Microsoft Clarity receives at least one test session
+- No blocking visual, form, copy, CTA, or analytics issues remain
 - The page clearly validates Personal AI Server demand rather than selling a generic workstation
 
 Current decision:
 
-- Static MVP implementation is deployed successfully.
-- Production URL is available for manual QA.
-- Do not start paid traffic until hosted browser QA is completed.
+- Issue #10 implementation is complete in source.
+- Do not start paid traffic until redeploy, browser QA, GA4 Realtime QA, and Clarity session QA are completed.
