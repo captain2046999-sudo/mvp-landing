@@ -171,22 +171,11 @@
           <li>Input on the preloaded AI stack</li>
         </ul>
       </div>
-      <form class="application-form" aria-label="Founding user application form" data-application-form novalidate>
-        <label>Name<input type="text" name="name" placeholder="Your name" autocomplete="name" required aria-describedby="name-error"><span class="field-error" id="name-error" data-error-for="name"></span></label>
-        <label>Email<input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-describedby="email-error"><span class="field-error" id="email-error" data-error-for="email"></span></label>
-        <label>What best describes you?<select name="persona" required aria-describedby="persona-error"><option value="">Select one</option><option>AI Enthusiast</option><option>Developer</option><option>Founder</option><option>Consultant</option><option>Agency</option><option>Enterprise Team</option></select><span class="field-error" id="persona-error" data-error-for="persona"></span></label>
-        <label>What would you use this for?<select name="use_case" required aria-describedby="use-case-error"><option value="">Select one</option><option>Local LLM</option><option>AI Agent</option><option>RAG</option><option>Image Generation</option><option>Coding</option><option>Research</option><option>Other</option></select><span class="field-error" id="use-case-error" data-error-for="use_case"></span></label>
-        <label>Budget<select name="budget_range" required aria-describedby="budget-range-error"><option value="">Select budget range</option><option>Less than $2,000</option><option>$2,000-$3,000</option><option>$3,000-$5,000</option><option>More than $5,000</option></select><span class="field-error" id="budget-range-error" data-error-for="budget_range"></span></label>
-        <label>What model would you like to run?<textarea name="desired_model" rows="4" placeholder="DeepSeek-R1&#10;Qwen3-235B&#10;GPT-OSS&#10;Llama&#10;Custom model" required aria-describedby="desired-model-error"></textarea><span class="field-error" id="desired-model-error" data-error-for="desired_model"></span></label>
-        <button class="button primary" type="submit">Apply for Early Access</button>
-        <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-        <div class="success-panel" data-success-panel hidden>
-          <h3>Your application details are ready</h3>
-          <p>Continue to the secure Tally form to save your application and keep the lead funnel in one place.</p>
-          <div class="success-actions"><a class="button primary" href="https://tally.so/r/81ryAo" target="_blank" rel="noopener" data-tally-link data-lead-cta data-cta-location="form_success">Continue to Tally</a></div>
-        </div>
-        <p class="form-note">This is an early access application, not a checkout form. Your answers help validate model support, pricing, and the right preloaded AI stack.</p>
-      </form>
+      <div class="application-form tally-embed-panel" aria-label="Founding user Tally application form" data-tally-panel>
+        <iframe class="tally-embed-frame" title="Personal AI Server Early Access Application" loading="lazy" width="100%" height="760" frameborder="0" marginheight="0" marginwidth="0" data-tally-embed></iframe>
+        <p class="form-note">Submit once in the embedded Tally form above. Submissions are stored directly in Tally, not in this static landing page.</p>
+        <a class="button secondary tally-fallback-link" href="https://tally.so/r/81ryAo" target="_blank" rel="noopener" data-tally-link data-lead-cta data-cta-location="tally_fallback">Open Tally form in a new tab</a>
+      </div>
     </section>
 
     <section class="section-wrap faq-section">
