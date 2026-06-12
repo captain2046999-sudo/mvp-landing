@@ -41,7 +41,7 @@ The product is positioned as local AI infrastructure for LLMs, agents, RAG, imag
 `-- README.md
 ```
 
-The current MVP is a static landing page with PRD-aligned copy, founding user form validation, FAQ guardrails, and production analytics hooks.
+The current MVP is a static landing page with PRD-aligned copy, a real Tally embed for lead capture, FAQ guardrails, and production analytics hooks.
 
 ## Source Documents
 
@@ -53,7 +53,7 @@ The current MVP is a static landing page with PRD-aligned copy, founding user fo
 
 1. Issue #2: Migrate PRD and establish project baseline - completed
 2. Issue #3: Create static landing page shell - completed
-3. Issue #4: Implement Founding User application form - completed
+3. Issue #4: Implement Founding User application form - completed, now served through Tally embed
 4. Issue #5: Add FAQ accordion and copy guardrails - completed
 5. Issue #6: Add analytics event hooks - completed
 6. Issue #7: Visual QA and launch checklist - in progress
@@ -83,7 +83,7 @@ node tests/issue-6-validation-checks.js
 node tests/issue-7-launch-readiness-checks.js
 ```
 
-The checks cover PRD positioning, FAQ guardrails, form fields, single-destination lead capture, analytics script presence, privacy-safe analytics payloads, and responsive launch-readiness basics. Hosted desktop/mobile browser QA and live analytics dashboard checks are still required before paid traffic starts.
+The checks cover PRD positioning, FAQ guardrails, Tally embed lead capture, single-destination CTA links, analytics script presence, privacy-safe analytics payloads, and responsive launch-readiness basics. Hosted desktop/mobile browser QA and live analytics dashboard checks are still required before paid traffic starts.
 
 ## Lead Capture Configuration
 
@@ -93,9 +93,11 @@ All lead-generation CTAs use one destination only:
 https://tally.so/r/81ryAo
 ```
 
-To change the destination later, update only `window.PAS_CONFIG.TALLY_FORM_URL` in `index.html`. `script.js` reads that value and applies it to every `data-lead-cta` and `data-tally-link` link.
+To change the destination later, update only `window.PAS_CONFIG.TALLY_FORM_URL` in `index.html`. `script.js` reads that value and applies it to every `data-lead-cta`, `data-tally-link`, and embedded Tally iframe.
 
-The on-page qualification form captures:
+The Founding User Program section uses a real Tally embed, not a local HTML form. A completed embedded form submission should appear in the Tally dashboard for form `81ryAo`.
+
+The Tally form should capture these lead qualification fields:
 
 - Name
 - Email
@@ -104,7 +106,7 @@ The on-page qualification form captures:
 - Budget range
 - Desired model
 
-The form submit button text is `Apply for Early Access`.
+Lead field values are stored in Tally, not in the static page analytics payload.
 
 ## Analytics
 
@@ -119,15 +121,15 @@ Tracked events:
 | Event | Trigger | Parameters |
 |---|---|---|
 | `cta_click` | Any lead-generation CTA click | `location`, `button_text` |
-| `form_start` | First interaction with the qualification form | none |
-| `form_submit` | Valid qualification form submission | `persona`, `use_case`, `budget_range` |
+| `form_start` | First detected interaction with the Tally embed | `provider` |
+| `form_submit` | Tally embed submit message, when emitted by Tally iframe | `provider` |
 | `faq_open` | FAQ item opened | `faq_id` |
 | `scroll_25` | 25% page scroll depth reached | none |
 | `scroll_50` | 50% page scroll depth reached | none |
 | `scroll_75` | 75% page scroll depth reached | none |
 | `scroll_100` | 100% page scroll depth reached | none |
 
-Analytics payloads intentionally do not include name, email, or long free-text model answers.
+Analytics payloads intentionally do not include name, email, or long free-text model answers. Tally is the source of truth for lead submissions and lead field values.
 
 ## Messaging Guardrails
 
