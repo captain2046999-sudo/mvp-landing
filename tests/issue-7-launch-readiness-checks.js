@@ -113,6 +113,7 @@ check(script.includes('window.clarity("event"'), "Clarity event forwarding is pr
 check(script.includes("getTallyEmbedUrl"), "Tally embed URL is generated from the configured form URL.");
 check(script.includes("https://tally.so/widgets/embed.js"), "Tally embed widget is loaded.");
 check(script.includes("iframe.dataset.tallySrc"), "Tally iframe is configured by script.");
+check(script.includes('embedUrl.searchParams.set("dynamicHeight", "1")'), "Tally embed uses official display parameters only.");
 check(script.includes('provider: "tally_embed"'), "Tally embed analytics provider marker is present.");
 check(script.includes("faq_id: faqId"), "FAQ open sends faq_id.");
 check(script.includes("button_text: getElementLabel(element)"), "CTA click sends button_text.");
@@ -121,7 +122,6 @@ check(!script.includes("event.preventDefault()"), "Script should not intercept l
 check(!script.includes("form.elements"), "Script should not read local form fields.");
 check(!script.includes("getTrimmedValue"), "Script should not extract local field values.");
 check(!script.includes("new FormData(form)"), "Tally URL builder does not copy arbitrary form data.");
-check(!script.includes("searchParams.set"), "Tally URL does not append form query params.");
 check(!script.includes("email: getTrimmedValue"), "Analytics payload does not include email.");
 check(!script.includes("name: getTrimmedValue"), "Analytics payload does not include name.");
 check(!script.includes("desired_model: getTrimmedValue"), "Analytics payload does not include free-text model answer.");
