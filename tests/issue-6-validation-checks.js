@@ -11,86 +11,78 @@ const assert = (condition, message) => {
 
 [
   "https://www.googletagmanager.com/gtag/js?id=G-V81RVYZK5H",
-  'gtag("config","G-V81RVYZK5H")',
+  'gtag("config", "G-V81RVYZK5H")',
   "https://www.clarity.ms/tag/",
   '"x3lkfxqt3i"',
-  'data-section-event="view_hero"',
-  'data-section-event="view_model_matrix"',
-  'data-section-event="view_memory_section"',
-  'data-section-event="view_stack_section"',
-  'data-analytics-event="click_apply_hero"',
-  'data-analytics-event="click_demo_hero"',
-  'data-analytics-event="click_book_demo"',
-  'data-budget-select'
+  "window.PAS_CONFIG",
+  "TALLY_FORM_URL",
+  "https://tally.so/r/81ryAo",
+  "data-lead-cta",
+  "data-cta-location"
 ].forEach((snippet) => {
   assert(html.includes(snippet), `Missing analytics HTML snippet: ${snippet}`);
 });
 
 [
-  "trackEvent",
-  'console.info("[analytics]"',
+  "window.trackEvent = function",
   "window.dataLayer.push",
   'window.gtag("event"',
   'window.clarity("event"',
   'window.clarity("set"',
-  "getSafeDestination",
-  "IntersectionObserver",
-  "viewedSections",
+  "configureTallyLinks",
   "trackedScrollDepths",
-  "trackedFaqQuestions",
-  "trackedBudgetRanges",
-  'eventName: "scroll_50"',
-  'eventName: "scroll_90"',
-  '"select_budget_range"',
-  '"submit_early_access"',
-  '"faq_expand"'
+  "trackedFaqIds",
+  "trackFormStart",
+  'trackEvent("cta_click"',
+  'trackEvent("form_start")',
+  'trackEvent("form_submit"',
+  'trackEvent("faq_open"',
+  "scrollDepths = [25, 50, 75, 100]"
 ].forEach((snippet) => {
   assert(script.includes(snippet), `Missing analytics script snippet: ${snippet}`);
 });
 
 [
-  "view_hero",
-  "click_apply_hero",
-  "click_demo_hero",
-  "view_model_matrix",
-  "view_memory_section",
-  "view_stack_section",
-  "select_budget_range",
-  "submit_early_access",
-  "click_book_demo",
-  "faq_expand",
+  "cta_click",
+  "form_start",
+  "form_submit",
+  "faq_open",
+  "scroll_25",
   "scroll_50",
-  "scroll_90"
+  "scroll_75",
+  "scroll_100"
 ].forEach((eventName) => {
-  assert(html.includes(eventName) || script.includes(eventName), `Missing PRD analytics event: ${eventName}`);
+  assert(script.includes(eventName), `Missing Issue #10 analytics event: ${eventName}`);
 });
 
 [
-  "role: getTrimmedValue(\"role\")",
+  "location: element.dataset.ctaLocation",
+  "button_text: getElementLabel(element)",
+  "persona: getTrimmedValue(\"persona\")",
   "use_case: getTrimmedValue(\"use_case\")",
-  "monthly_spend: getTrimmedValue(\"monthly_spend\")",
-  "budget_range: getTrimmedValue(\"budget\")",
-  "demo_interest: selectedDemoInterest"
+  "budget_range: getTrimmedValue(\"budget_range\")",
+  "faq_id: faqId"
 ].forEach((safeField) => {
-  assert(script.includes(safeField), `Missing safe lead quality field: ${safeField}`);
+  assert(script.includes(safeField), `Missing safe analytics field: ${safeField}`);
 });
 
+const leadHrefMatches = html.match(/href="https:\/\/tally\.so\/r\/81ryAo"/g) || [];
+assert(leadHrefMatches.length >= 5, "All visible lead CTAs should use the configured Tally URL as their fallback href.");
+assert(!html.includes("calendly.com"), "Calendly should not remain as a lead destination.");
+assert(!html.includes("data-analytics-event"), "Old per-button analytics attributes should be removed.");
+assert(!script.includes("click_apply_hero"), "Old hero apply event should be removed.");
+assert(!script.includes("click_demo_hero"), "Old hero demo event should be removed.");
+assert(!script.includes("submit_early_access"), "Old form submit event should be replaced by form_submit.");
+assert(!script.includes("faq_expand"), "Old FAQ event should be replaced by faq_open.");
+assert(!script.includes("scroll_90"), "Old 90% scroll event should be replaced by 75% and 100% events.");
+assert(!script.includes("select_budget_range"), "Budget selection should not emit a separate old event.");
 assert(!script.includes("email: getTrimmedValue"), "Analytics payload should not include email.");
-assert(!script.includes("current_setup: getTrimmedValue"), "Analytics payload should not include long current setup text.");
-assert(!script.includes("desired_models: getTrimmedValue"), "Analytics payload should not include long desired model text.");
-assert(!script.includes("new FormData(form)"), "Tally URL should not be prefilled with form data because outbound URL capture may leak PII.");
-assert(!script.includes("url.searchParams.set(key"), "Tally URL should not copy arbitrary form fields into query parameters.");
-assert(script.includes('url.searchParams.set("source", "personal-ai-server-landing")'), "Tally URL should keep only non-PII campaign metadata.");
-assert(script.includes('url.searchParams.set("intent", "founding-user-application")'), "Tally URL should keep only non-PII intent metadata.");
-assert(!html.includes('data-analytics-event="click_submit_tally"'), "Tally link click should not be tracked because its URL may contain application context.");
-assert(!html.includes('data-tally-link data-analytics-event'), "Tally outbound link should not carry analytics attributes.");
-assert(!script.includes("href: element.getAttribute"), "Analytics should not send raw link href values.");
-assert(!script.includes("destination: element.getAttribute"), "Analytics should not send unfiltered link destinations.");
-assert(script.includes('destination: getSafeDestination(element.getAttribute("href") || "")'), "Click analytics should use sanitized link destinations.");
-assert(script.includes("return `${url.origin}${url.pathname}`;"), "Safe link destinations should exclude query strings and fragments.");
+assert(!script.includes("name: getTrimmedValue"), "Analytics payload should not include name.");
+assert(!script.includes("desired_model: getTrimmedValue"), "Analytics payload should not include long desired model text.");
+assert(!script.includes("new FormData(form)"), "Outbound URLs should not be built from arbitrary form data.");
+assert(!script.includes("searchParams.set"), "Tally URL should remain the single configured destination without form query params.");
 assert(script.includes("trackedScrollDepths.add(eventName)"), "Scroll depth events should be guarded against repeat firing.");
-assert(script.includes("sectionObserver.unobserve(entry.target)"), "Section view events should stop observing after first view.");
-assert(script.includes("trackedFaqQuestions.add(question)"), "FAQ expand events should be guarded per question.");
-assert(script.includes("trackedBudgetRanges.add(budgetRange)"), "Budget selection events should be guarded per selected range.");
+assert(script.includes("trackedFaqIds.add(faqId)"), "FAQ open events should be guarded per FAQ id.");
+assert(script.includes("formStarted = true"), "Form start should be tracked once per page session.");
 
 console.log("Issue #6 analytics checks passed.");
