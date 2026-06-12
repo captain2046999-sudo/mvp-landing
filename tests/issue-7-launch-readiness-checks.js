@@ -70,23 +70,19 @@ check(!/\bVAT\b/i.test(index), "No VAT-first purchase logistics language.");
 check(includesAll(index, [
   "window.PAS_CONFIG",
   "TALLY_FORM_URL",
-  'name="name"',
-  'name="email"',
-  'name="persona"',
-  'name="use_case"',
-  'name="budget_range"',
-  'name="desired_model"',
-  "AI Enthusiast",
-  "Enterprise Team",
-  "Local LLM",
-  "AI Agent",
-  "Less than $2,000",
-  "$3,000-$5,000",
-  "More than $5,000",
-  "DeepSeek-R1",
-  "Apply for Early Access"
-]), "Founding user form fields and Issue #10 qualification options are present.");
+  "data-tally-panel",
+  "data-tally-embed",
+  "data-tally-link",
+  "Submit once in the embedded Tally form above",
+  "Open Tally form in a new tab"
+]), "Founding user section uses a real Tally embed.");
 
+check(!index.includes("data-application-form"), "Local application form should be removed.");
+check(!index.includes("data-success-panel"), "Local fake success panel should be removed.");
+check(!index.includes('name="name"'), "Applicant name should be collected by Tally, not local HTML.");
+check(!index.includes('name="email"'), "Applicant email should be collected by Tally, not local HTML.");
+check(!index.includes('name="persona"'), "Persona should be collected by Tally, not local HTML.");
+check(!index.includes('name="budget_range"'), "Budget should be collected by Tally, not local HTML.");
 check(!index.includes("calendly.com"), "Calendly should not remain in the lead funnel.");
 check(!index.includes("data-calendly"), "Calendly data attributes should not remain in the lead funnel.");
 
@@ -114,12 +110,16 @@ check(includesAll(index + script, [
 check(script.includes("window.trackEvent = function"), "Global analytics helper is present.");
 check(script.includes('window.gtag("event"'), "GA4 event forwarding is present.");
 check(script.includes('window.clarity("event"'), "Clarity event forwarding is present.");
-check(script.includes('persona: getTrimmedValue("persona")'), "Form submit sends persona.");
-check(script.includes('use_case: getTrimmedValue("use_case")'), "Form submit sends use case.");
-check(script.includes('budget_range: getTrimmedValue("budget_range")'), "Form submit sends budget range.");
+check(script.includes("getTallyEmbedUrl"), "Tally embed URL is generated from the configured form URL.");
+check(script.includes("https://tally.so/widgets/embed.js"), "Tally embed widget is loaded.");
+check(script.includes("iframe.dataset.tallySrc"), "Tally iframe is configured by script.");
+check(script.includes('provider: "tally_embed"'), "Tally embed analytics provider marker is present.");
 check(script.includes("faq_id: faqId"), "FAQ open sends faq_id.");
 check(script.includes("button_text: getElementLabel(element)"), "CTA click sends button_text.");
 check(script.includes("location: element.dataset.ctaLocation"), "CTA click sends location.");
+check(!script.includes("event.preventDefault()"), "Script should not intercept local form submission.");
+check(!script.includes("form.elements"), "Script should not read local form fields.");
+check(!script.includes("getTrimmedValue"), "Script should not extract local field values.");
 check(!script.includes("new FormData(form)"), "Tally URL builder does not copy arbitrary form data.");
 check(!script.includes("searchParams.set"), "Tally URL does not append form query params.");
 check(!script.includes("email: getTrimmedValue"), "Analytics payload does not include email.");
@@ -138,8 +138,9 @@ check(includesAll(style, [
 ]), "Responsive CSS includes mobile and table safeguards.");
 
 check(readme.includes("Primary lead destination: `https://tally.so/r/81ryAo`"), "README documents the single lead destination.");
+check(readme.includes("Tally embed"), "README documents the Tally embed lead capture path.");
 check(readme.includes("`cta_click`"), "README documents Issue #10 event inventory.");
-check(readme.includes("Analytics payloads intentionally do not include name, email, or long free-text model answers."), "README documents analytics privacy guardrails.");
+check(readme.includes("Lead field values are stored in Tally, not in the static page analytics payload."), "README documents Tally as lead data source.");
 check(checklist.includes("Issue #10 analytics and lead capture setup: implemented, live verification pending"), "QA checklist records Issue #10 implementation status.");
 check(checklist.includes("Do not start paid traffic until redeploy, browser QA, GA4 Realtime QA, and Clarity session QA are completed."), "QA checklist keeps analytics and browser QA as launch gates.");
 
