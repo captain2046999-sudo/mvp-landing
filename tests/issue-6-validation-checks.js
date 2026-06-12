@@ -33,6 +33,8 @@ const assert = (condition, message) => {
   "configureTallyLinks",
   "configureTallyEmbed",
   "loadTallyWidget",
+  "getTallyEmbedUrl",
+  'embedUrl.searchParams.set("dynamicHeight", "1")',
   "trackedScrollDepths",
   "scrollDepthEvents",
   "trackedFaqIds",
@@ -86,7 +88,6 @@ assert(!script.includes("email: getTrimmedValue"), "Analytics payload should not
 assert(!script.includes("name: getTrimmedValue"), "Analytics payload should not include name.");
 assert(!script.includes("desired_model: getTrimmedValue"), "Analytics payload should not include long desired model text.");
 assert(!script.includes("new FormData(form)"), "Outbound URLs should not be built from arbitrary form data.");
-assert(!script.includes("searchParams.set"), "Tally URL should remain the single configured destination without form query params.");
 assert(script.includes("trackedScrollDepths.add(eventName)"), "Scroll depth events should be guarded against repeat firing.");
 assert(script.includes("trackedFaqIds.add(faqId)"), "FAQ open events should be guarded per FAQ id.");
 assert(script.includes("tallyInteractionStarted = true"), "Tally form start should be tracked once per page session.");
