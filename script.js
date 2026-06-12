@@ -1,25 +1,26 @@
 (() => {
-  const trackEvent = (eventName, params = {}) => {
-    if (!eventName) {
+  const config = window.PAS_CONFIG || {};
+  const TALLY_FORM_URL = config.TALLY_FORM_URL || "https://tally.so/r/81ryAo";
+
+  window.trackEvent = function(name, params = {}) {
+    if (!name) {
       return;
     }
 
     const payload = { ...params };
 
-    console.info("[analytics]", eventName, payload);
-
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
-      event: eventName,
+      event: name,
       ...payload
     });
 
     if (typeof window.gtag === "function") {
-      window.gtag("event", eventName, payload);
+      window.gtag("event", name, payload);
     }
 
     if (typeof window.clarity === "function") {
-      window.clarity("event", eventName);
+      window.clarity("event", name);
 
       Object.entries(payload).forEach(([key, value]) => {
         if (value === undefined || value === null || typeof value === "object") {
@@ -31,67 +32,31 @@
     }
   };
 
+  const trackEvent = window.trackEvent;
   const getElementLabel = (element) => element.textContent.trim().replace(/\s+/g, " ");
 
-  const getSafeDestination = (href) => {
-    if (!href) {
-      return "";
-    }
-
-    try {
-      const url = new URL(href, window.location.href);
-      return `${url.origin}${url.pathname}`;
-    } catch {
-      return href.split("?")[0];
-    }
+  const configureTallyLinks = () => {
+    document.querySelectorAll("a[data-lead-cta], a[data-tally-link]").forEach((link) => {
+      link.href = TALLY_FORM_URL;
+      link.target = "_blank";
+      link.rel = "noopener";
+    });
   };
 
-  document.querySelectorAll("[data-analytics-event]").forEach((element) => {
+  configureTallyLinks();
+
+  document.querySelectorAll("[data-lead-cta]").forEach((element) => {
     element.addEventListener("click", () => {
-      trackEvent(element.dataset.analyticsEvent, {
-        label: getElementLabel(element),
-        destination: getSafeDestination(element.getAttribute("href") || ""),
-        section: element.closest("[data-section-event]")?.dataset.sectionEvent || ""
+      trackEvent("cta_click", {
+        location: element.dataset.ctaLocation || "unknown",
+        button_text: getElementLabel(element)
       });
     });
   });
 
-  const viewedSections = new Set();
-  const trackSectionView = (section) => {
-    const eventName = section.dataset.sectionEvent;
-
-    if (!eventName || viewedSections.has(eventName)) {
-      return;
-    }
-
-    viewedSections.add(eventName);
-    trackEvent(eventName, {
-      section_id: section.id || "hero"
-    });
-  };
-
-  const trackedSections = document.querySelectorAll("[data-section-event]");
-
-  if ("IntersectionObserver" in window) {
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          trackSectionView(entry.target);
-          sectionObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.35 });
-
-    trackedSections.forEach((section) => sectionObserver.observe(section));
-  } else {
-    trackedSections.forEach(trackSectionView);
-  }
-
   const trackedScrollDepths = new Set();
-  const scrollDepthEvents = [
-    { depth: 50, eventName: "scroll_50" },
-    { depth: 90, eventName: "scroll_90" }
-  ];
+  const scrollDepths = [25, 50, 75, 100];
+  let scrollTicking = false;
 
   const trackScrollDepth = () => {
     const documentElement = document.documentElement;
@@ -102,20 +67,40 @@
       ? 100
       : Math.round(((window.scrollY || documentElement.scrollTop) / scrollableHeight) * 100);
 
-    scrollDepthEvents.forEach(({ depth, eventName }) => {
+    scrollDepths.forEach((depth) => {
+      const eventName = `scroll_${depth}`;
+
       if (currentDepth >= depth && !trackedScrollDepths.has(eventName)) {
         trackedScrollDepths.add(eventName);
-        trackEvent(eventName, {
-          scroll_depth: depth
-        });
+        trackEvent(eventName);
       }
     });
   };
 
-  window.addEventListener("scroll", trackScrollDepth, { passive: true });
+  const handleScroll = () => {
+    if (scrollTicking) {
+      return;
+    }
+
+    scrollTicking = true;
+    window.requestAnimationFrame(() => {
+      trackScrollDepth();
+      scrollTicking = false;
+    });
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
   trackScrollDepth();
 
-  const trackedFaqQuestions = new Set();
+  const trackedFaqIds = new Set();
+  const toFaqId = (question, index) => {
+    const slug = question
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    return slug || `faq-${index + 1}`;
+  };
 
   document.querySelectorAll("details.faq-item").forEach((details, index) => {
     details.addEventListener("toggle", () => {
@@ -124,14 +109,15 @@
       }
 
       const question = details.querySelector("summary")?.textContent.trim() || `FAQ ${index + 1}`;
+      const faqId = toFaqId(question, index);
 
-      if (trackedFaqQuestions.has(question)) {
+      if (trackedFaqIds.has(faqId)) {
         return;
       }
 
-      trackedFaqQuestions.add(question);
-      trackEvent("faq_expand", {
-        question
+      trackedFaqIds.add(faqId);
+      trackEvent("faq_open", {
+        faq_id: faqId
       });
     });
   });
@@ -145,33 +131,19 @@
   const status = form.querySelector("[data-form-status]");
   const successPanel = form.querySelector("[data-success-panel]");
   const tallyLink = form.querySelector("[data-tally-link]");
-  const calendlyLink = form.querySelector("[data-calendly-link]");
-
-  const requiredFields = [
-    "email",
-    "role",
-    "current_setup",
-    "desired_models",
-    "use_case",
-    "monthly_spend",
-    "budget"
-  ];
-
+  const requiredFields = ["name", "email", "persona", "use_case", "budget_range", "desired_model"];
   const labels = {
+    name: "Name",
     email: "Email",
-    role: "Role",
-    current_setup: "Current AI setup",
-    desired_models: "Models you want to run locally",
-    use_case: "Main use case",
-    monthly_spend: "Monthly AI / cloud GPU spend",
-    budget: "Expected budget",
-    demo_interest: "Demo interest"
+    persona: "What best describes you?",
+    use_case: "What would you use this for?",
+    budget_range: "Budget",
+    desired_model: "What model would you like to run?"
   };
-
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let formStarted = false;
 
   const getField = (name) => form.elements[name];
-
   const getErrorElement = (name) => form.querySelector(`[data-error-for="${name}"]`);
 
   const setStatus = (message) => {
@@ -196,13 +168,22 @@
   const clearFieldError = (name) => setFieldError(name, "");
 
   const clearAllErrors = () => {
-    [...requiredFields, "demo_interest"].forEach(clearFieldError);
+    requiredFields.forEach(clearFieldError);
     setStatus("");
   };
 
   const getTrimmedValue = (name) => {
     const field = getField(name);
     return field && typeof field.value === "string" ? field.value.trim() : "";
+  };
+
+  const trackFormStart = () => {
+    if (formStarted) {
+      return;
+    }
+
+    formStarted = true;
+    trackEvent("form_start");
   };
 
   const validateForm = () => {
@@ -219,32 +200,17 @@
       errors.email = "Enter a valid email address.";
     }
 
-    if (!form.querySelector('input[name="demo_interest"]:checked')) {
-      errors.demo_interest = "Select your demo interest.";
-    }
-
     return errors;
   };
 
   const focusFirstError = (errors) => {
     const firstError = Object.keys(errors)[0];
-
-    if (firstError === "demo_interest") {
-      form.querySelector('input[name="demo_interest"]')?.focus();
-      return;
-    }
-
     getField(firstError)?.focus();
   };
 
-  const buildTallyUrl = () => {
-    const url = new URL(form.dataset.tallyBaseUrl || "https://tally.so/r/81ryAo");
-
-    url.searchParams.set("source", "personal-ai-server-landing");
-    url.searchParams.set("intent", "founding-user-application");
-
-    return url.toString();
-  };
+  ["focusin", "input", "change"].forEach((eventName) => {
+    form.addEventListener(eventName, trackFormStart);
+  });
 
   form.addEventListener("input", (event) => {
     const target = event.target;
@@ -262,21 +228,9 @@
     }
   });
 
-  const trackedBudgetRanges = new Set();
-
-  getField("budget")?.addEventListener("change", () => {
-    const budgetRange = getTrimmedValue("budget");
-
-    if (budgetRange && !trackedBudgetRanges.has(budgetRange)) {
-      trackedBudgetRanges.add(budgetRange);
-      trackEvent("select_budget_range", {
-        budget_range: budgetRange
-      });
-    }
-  });
-
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    trackFormStart();
     clearAllErrors();
 
     if (successPanel) {
@@ -292,24 +246,14 @@
       return;
     }
 
-    const tallyUrl = buildTallyUrl();
-    const calendlyUrl = form.dataset.calendlyUrl || "https://calendly.com/captain2046999/personal-ai-server-founding-user-call";
-    const selectedDemoInterest = form.querySelector('input[name="demo_interest"]:checked')?.value || "";
-
-    trackEvent("submit_early_access", {
-      role: getTrimmedValue("role"),
+    trackEvent("form_submit", {
+      persona: getTrimmedValue("persona"),
       use_case: getTrimmedValue("use_case"),
-      monthly_spend: getTrimmedValue("monthly_spend"),
-      budget_range: getTrimmedValue("budget"),
-      demo_interest: selectedDemoInterest
+      budget_range: getTrimmedValue("budget_range")
     });
 
     if (tallyLink) {
-      tallyLink.href = tallyUrl;
-    }
-
-    if (calendlyLink) {
-      calendlyLink.href = calendlyUrl;
+      tallyLink.href = TALLY_FORM_URL;
     }
 
     if (successPanel) {
