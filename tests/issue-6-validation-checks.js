@@ -18,7 +18,8 @@ const assert = (condition, message) => {
   "TALLY_FORM_URL",
   "https://tally.so/r/81ryAo",
   "data-lead-cta",
-  "data-cta-location"
+  "data-cta-location",
+  "data-tally-embed"
 ].forEach((snippet) => {
   assert(html.includes(snippet), `Missing analytics HTML snippet: ${snippet}`);
 });
@@ -30,12 +31,14 @@ const assert = (condition, message) => {
   'window.clarity("event"',
   'window.clarity("set"',
   "configureTallyLinks",
+  "configureTallyEmbed",
+  "loadTallyWidget",
   "trackedScrollDepths",
   "scrollDepthEvents",
   "trackedFaqIds",
-  "trackFormStart",
+  "trackTallyInteraction",
   'trackEvent("cta_click"',
-  'trackEvent("form_start")',
+  'trackEvent("form_start"',
   'trackEvent("form_submit"',
   'trackEvent("faq_open"'
 ].forEach((snippet) => {
@@ -58,10 +61,8 @@ const assert = (condition, message) => {
 [
   "location: element.dataset.ctaLocation",
   "button_text: getElementLabel(element)",
-  "persona: getTrimmedValue(\"persona\")",
-  "use_case: getTrimmedValue(\"use_case\")",
-  "budget_range: getTrimmedValue(\"budget_range\")",
-  "faq_id: faqId"
+  "faq_id: faqId",
+  'provider: "tally_embed"'
 ].forEach((safeField) => {
   assert(script.includes(safeField), `Missing safe analytics field: ${safeField}`);
 });
@@ -70,6 +71,11 @@ const leadHrefMatches = html.match(/href="https:\/\/tally\.so\/r\/81ryAo"/g) || 
 assert(leadHrefMatches.length >= 5, "All visible lead CTAs should use the configured Tally URL as their fallback href.");
 assert(!html.includes("calendly.com"), "Calendly should not remain as a lead destination.");
 assert(!html.includes("data-analytics-event"), "Old per-button analytics attributes should be removed.");
+assert(!html.includes("data-application-form"), "Local lead form should be removed.");
+assert(!html.includes("data-success-panel"), "Local fake success panel should be removed.");
+assert(!script.includes("event.preventDefault()"), "Script should not intercept local form submission.");
+assert(!script.includes("form.elements"), "Script should not read local form fields.");
+assert(!script.includes("getTrimmedValue"), "Script should not extract local field values.");
 assert(!script.includes("click_apply_hero"), "Old hero apply event should be removed.");
 assert(!script.includes("click_demo_hero"), "Old hero demo event should be removed.");
 assert(!script.includes("submit_early_access"), "Old form submit event should be replaced by form_submit.");
@@ -83,6 +89,6 @@ assert(!script.includes("new FormData(form)"), "Outbound URLs should not be buil
 assert(!script.includes("searchParams.set"), "Tally URL should remain the single configured destination without form query params.");
 assert(script.includes("trackedScrollDepths.add(eventName)"), "Scroll depth events should be guarded against repeat firing.");
 assert(script.includes("trackedFaqIds.add(faqId)"), "FAQ open events should be guarded per FAQ id.");
-assert(script.includes("formStarted = true"), "Form start should be tracked once per page session.");
+assert(script.includes("tallyInteractionStarted = true"), "Tally form start should be tracked once per page session.");
 
 console.log("Issue #6 analytics checks passed.");
