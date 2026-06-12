@@ -29,6 +29,7 @@ const assert = (condition, message) => {
   "loadTallyWidget",
   "iframe.dataset.tallySrc",
   "Tally.loadEmbeds",
+  'embedUrl.searchParams.set("dynamicHeight", "1")',
   "tally_embed",
   "form_start",
   "form_submit"
@@ -48,7 +49,8 @@ assert(!script.includes("event.preventDefault()"), "Script should not intercept 
 assert(!script.includes("form.elements"), "Script should not read local form fields.");
 assert(!script.includes("getTrimmedValue"), "Script should not extract local field values.");
 assert(!script.includes("new FormData(form)"), "Script should not collect arbitrary form data.");
-assert(!script.includes("searchParams.set"), "Tally URL should remain the configured destination without form query params.");
+assert(!script.includes("email: get"), "Script should not send email in analytics payloads.");
+assert(!script.includes("name: get"), "Script should not send applicant name in analytics payloads.");
 assert(!html.includes("data-calendly"), "Calendly should not remain in the lead capture funnel.");
 assert(!script.includes("calendly"), "Calendly logic should not remain in the lead capture script.");
 
