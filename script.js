@@ -1,6 +1,7 @@
 (() => {
   const config = window.PAS_CONFIG || {};
   const TALLY_FORM_URL = config.TALLY_FORM_URL || "https://tally.so/r/81ryAo";
+  const TALLY_WIDGET_SRC = "https://tally.so/widgets/embed.js";
 
   window.trackEvent = function(name, params = {}) {
     if (!name) {
@@ -35,6 +36,26 @@
   const trackEvent = window.trackEvent;
   const getElementLabel = (element) => element.textContent.trim().replace(/\s+/g, " ");
 
+  const getTallyEmbedUrl = () => {
+    try {
+      const sourceUrl = new URL(TALLY_FORM_URL, window.location.href);
+      const formId = sourceUrl.pathname.split("/").filter(Boolean).pop();
+
+      if (!formId) {
+        return "";
+      }
+
+      const embedUrl = new URL(`https://tally.so/embed/${formId}`);
+      embedUrl.searchParams.set("alignLeft", "1");
+      embedUrl.searchParams.set("hideTitle", "1");
+      embedUrl.searchParams.set("transparentBackground", "1");
+      embedUrl.searchParams.set("dynamicHeight", "1");
+      return embedUrl.toString();
+    } catch {
+      return "";
+    }
+  };
+
   const configureTallyLinks = () => {
     document.querySelectorAll("a[data-lead-cta], a[data-tally-link]").forEach((link) => {
       link.href = TALLY_FORM_URL;
@@ -43,7 +64,42 @@
     });
   };
 
+  const configureTallyEmbed = () => {
+    const tallyEmbedUrl = getTallyEmbedUrl();
+
+    if (!tallyEmbedUrl) {
+      return;
+    }
+
+    document.querySelectorAll("iframe[data-tally-embed]").forEach((iframe) => {
+      iframe.dataset.tallySrc = tallyEmbedUrl;
+    });
+  };
+
+  const loadTallyWidget = () => {
+    if (window.Tally && typeof window.Tally.loadEmbeds === "function") {
+      window.Tally.loadEmbeds();
+      return;
+    }
+
+    if (document.querySelector(`script[src="${TALLY_WIDGET_SRC}"]`)) {
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = TALLY_WIDGET_SRC;
+    script.async = true;
+    script.onload = () => {
+      if (window.Tally && typeof window.Tally.loadEmbeds === "function") {
+        window.Tally.loadEmbeds();
+      }
+    };
+    document.body.appendChild(script);
+  };
+
   configureTallyLinks();
+  configureTallyEmbed();
+  loadTallyWidget();
 
   document.querySelectorAll("[data-lead-cta]").forEach((element) => {
     element.addEventListener("click", () => {
@@ -125,146 +181,34 @@
     });
   });
 
-  const form = document.querySelector("[data-application-form]");
-
-  if (!form) {
-    return;
-  }
-
-  const status = form.querySelector("[data-form-status]");
-  const successPanel = form.querySelector("[data-success-panel]");
-  const tallyLink = form.querySelector("[data-tally-link]");
-  const requiredFields = ["name", "email", "persona", "use_case", "budget_range", "desired_model"];
-  const labels = {
-    name: "Name",
-    email: "Email",
-    persona: "What best describes you?",
-    use_case: "What would you use this for?",
-    budget_range: "Budget",
-    desired_model: "What model would you like to run?"
-  };
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  let formStarted = false;
-
-  const getField = (name) => form.elements[name];
-  const getErrorElement = (name) => form.querySelector(`[data-error-for="${name}"]`);
-
-  const setStatus = (message) => {
-    if (status) {
-      status.textContent = message;
-    }
-  };
-
-  const setFieldError = (name, message) => {
-    const error = getErrorElement(name);
-    const field = getField(name);
-
-    if (error) {
-      error.textContent = message;
-    }
-
-    if (field && typeof field.setAttribute === "function") {
-      field.setAttribute("aria-invalid", message ? "true" : "false");
-    }
-  };
-
-  const clearFieldError = (name) => setFieldError(name, "");
-
-  const clearAllErrors = () => {
-    requiredFields.forEach(clearFieldError);
-    setStatus("");
-  };
-
-  const getTrimmedValue = (name) => {
-    const field = getField(name);
-    return field && typeof field.value === "string" ? field.value.trim() : "";
-  };
-
-  const trackFormStart = () => {
-    if (formStarted) {
+  let tallyInteractionStarted = false;
+  const trackTallyInteraction = () => {
+    if (tallyInteractionStarted) {
       return;
     }
 
-    formStarted = true;
-    trackEvent("form_start");
-  };
-
-  const validateForm = () => {
-    const errors = {};
-
-    requiredFields.forEach((name) => {
-      if (!getTrimmedValue(name)) {
-        errors[name] = `${labels[name]} is required.`;
-      }
+    tallyInteractionStarted = true;
+    trackEvent("form_start", {
+      provider: "tally_embed"
     });
-
-    const email = getTrimmedValue("email");
-    if (email && !emailPattern.test(email)) {
-      errors.email = "Enter a valid email address.";
-    }
-
-    return errors;
   };
 
-  const focusFirstError = (errors) => {
-    const firstError = Object.keys(errors)[0];
-    getField(firstError)?.focus();
-  };
-
-  ["focusin", "input", "change"].forEach((eventName) => {
-    form.addEventListener(eventName, trackFormStart);
+  document.querySelectorAll("iframe[data-tally-embed]").forEach((iframe) => {
+    iframe.addEventListener("pointerenter", trackTallyInteraction, { passive: true });
+    iframe.addEventListener("focus", trackTallyInteraction);
   });
 
-  form.addEventListener("input", (event) => {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement) {
-      clearFieldError(target.name);
-      setStatus("");
-    }
-  });
-
-  form.addEventListener("change", (event) => {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement) {
-      clearFieldError(target.name);
-      setStatus("");
-    }
-  });
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    trackFormStart();
-    clearAllErrors();
-
-    if (successPanel) {
-      successPanel.hidden = true;
-    }
-
-    const errors = validateForm();
-
-    if (Object.keys(errors).length > 0) {
-      Object.entries(errors).forEach(([name, message]) => setFieldError(name, message));
-      setStatus("Complete the required fields before continuing.");
-      focusFirstError(errors);
+  window.addEventListener("message", (event) => {
+    if (event.origin !== "https://tally.so") {
       return;
     }
 
-    trackEvent("form_submit", {
-      persona: getTrimmedValue("persona"),
-      use_case: getTrimmedValue("use_case"),
-      budget_range: getTrimmedValue("budget_range")
-    });
+    const payload = typeof event.data === "string" ? event.data : JSON.stringify(event.data || {});
 
-    if (tallyLink) {
-      tallyLink.href = TALLY_FORM_URL;
+    if (/submit|submitted/i.test(payload)) {
+      trackEvent("form_submit", {
+        provider: "tally_embed"
+      });
     }
-
-    if (successPanel) {
-      successPanel.hidden = false;
-      successPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-    setStatus("Application details validated. Continue to Tally to save your application.");
-    tallyLink?.focus();
   });
 })();
