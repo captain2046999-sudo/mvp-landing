@@ -58,7 +58,7 @@ The current MVP is a static landing page with PRD-aligned copy, founding user fo
 5. Issue #6: Add analytics event hooks - completed
 6. Issue #7: Visual QA and launch checklist - in progress
 7. Issue #9: Vercel deploy and hosted QA - in progress
-8. Issue #10: Analytics and lead capture setup - in progress
+8. Issue #10: Analytics and lead capture setup - implemented; live QA pending
 
 Issue #1 is a test issue and is not part of the official implementation sequence.
 
