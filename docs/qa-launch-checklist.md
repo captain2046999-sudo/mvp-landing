@@ -18,8 +18,8 @@ Current implementation status:
 Launch status:
 
 - Static launch-readiness checks: scripts updated, local execution pending
-- Vercel production deployment: pending redeploy verification for latest commit
-- Hosted fetch-level QA: pending redeploy verification for latest commit
+- Vercel production deployment: passed for latest checked source deployment
+- Hosted fetch-level QA: passed for homepage, `style.css`, and `script.js`; hero image asset unchanged in this issue
 - GA4 Realtime QA: pending browser/dashboard confirmation
 - Microsoft Clarity session QA: pending browser/dashboard confirmation
 - Hosted desktop visual QA: pending manual Chrome and Edge pass
@@ -122,7 +122,7 @@ Privacy guardrails:
 
 Status:
 
-Updated, local execution pending.
+Updated, local execution pending because the current Codex Windows sandbox cannot execute local commands.
 
 Command:
 
@@ -157,22 +157,27 @@ Checks covered:
 
 Status:
 
-Pending redeploy verification for the latest Issue #10 commits.
+Passed for HTML, CSS, and JavaScript source delivery on `https://syvidea.com`.
 
-Required checks:
+Checks completed:
 
 - Production homepage returns `200 OK`
 - Production homepage renders expected `Personal AI Server` HTML
+- Source HTML contains GA4, Clarity, and `TALLY_FORM_URL`
 - `style.css` returns `200 OK`
 - `script.js` returns `200 OK`
-- `assets/personal-ai-server-hero.jpg` returns `200 OK`
-- Unknown path returns `404 Not Found`
-- Main production domain does not return `x-robots-tag: noindex`
-- Source HTML contains GA4, Clarity, and `TALLY_FORM_URL`
+- `script.js` includes `cta_click`, `form_start`, `form_submit`, `faq_open`, `scroll_25`, `scroll_50`, `scroll_75`, and `scroll_100`
+- Vercel build logs show the deployment completed successfully
+
+Checks still required:
+
+- `assets/personal-ai-server-hero.jpg` should be spot-checked in browser during visual QA
+- Unknown path should be checked for expected 404 behavior before traffic
+- Main production domain should be rechecked for `x-robots-tag: noindex` before traffic
 
 Notes:
 
-- Fetch-level QA confirms deployment availability and static asset delivery.
+- Fetch-level QA confirms deployment availability and static asset delivery for the changed files.
 - It does not replace real browser visual QA, form interaction QA, or analytics dashboard QA.
 
 ---
@@ -300,5 +305,5 @@ The MVP is ready for first validation traffic only when:
 
 Current decision:
 
-- Issue #10 implementation is complete in source.
+- Issue #10 implementation is complete in source and deployed.
 - Do not start paid traffic until redeploy, browser QA, GA4 Realtime QA, and Clarity session QA are completed.
