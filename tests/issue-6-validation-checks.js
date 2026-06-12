@@ -31,13 +31,13 @@ const assert = (condition, message) => {
   'window.clarity("set"',
   "configureTallyLinks",
   "trackedScrollDepths",
+  "scrollDepthEvents",
   "trackedFaqIds",
   "trackFormStart",
   'trackEvent("cta_click"',
   'trackEvent("form_start")',
   'trackEvent("form_submit"',
-  'trackEvent("faq_open"',
-  "scrollDepths = [25, 50, 75, 100]"
+  'trackEvent("faq_open"'
 ].forEach((snippet) => {
   assert(script.includes(snippet), `Missing analytics script snippet: ${snippet}`);
 });
